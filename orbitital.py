@@ -228,6 +228,12 @@ class Orbit:
         return math.sqrt((2 * self.parent_body.mue_kmps2 / new_r_km) - (self.parent_body.mue_kmps2 / new_semimajor_km))
     
 
+    def elliptical_v_at_anomaly_new_semi(self, true_anomaly_deg: float, a_t: float) -> float:
+        """ Finds the velocity at some anomaly"""
+        r_km = calculate_r_scalar_km(self.semimajor_axis_km, self.eccentricity, true_anomaly_deg)
+        return math.sqrt((2 * self.parent_body.mue_kmps2 / r_km) - (self.parent_body.mue_kmps2 / a_t))
+    
+
     def required_dv_for_tangential_manoeuver(self, new_r_km) -> float:
         """ Finds the required dv for a single tangential manuever. 
             Assumes manoeuver takes place at current anomaly 
@@ -240,6 +246,19 @@ class Orbit:
 
         return dv
 
+
+    def required_dv_for_coplanar_transfer(self, a2_km: float, e2: float) -> float:
+        """ Calculates the dv required for a coplanar transfer"""
+        rp1_km = self.semimajor_axis_km * (1 - self.eccentricity)
+        rp2_km = a2_km * (1 - e2)
+        at = self.calculate_new_semi_major_axis(rp2_km)
+
+        v1 = self.elliptical_v_at_anomaly(self.true_anomaly_deg)
+        v2 = self.elliptical_v_at_anomaly_new_semi(self.true_anomaly_deg, at)
+
+        dv = v2 - v1
+
+        return dv
 
 
     def required_dv_for_inc_change(self, desired_inclination_deg) -> float:

@@ -41,7 +41,7 @@ InitialOrbit.label = "Initial Orbit"
 # New Orbit elements
 t_cur = 0
 maneuver1_anomaly_deg   = 180
-maneuver1_inc_deg       = 28.58
+maneuver1_inc_deg       = 29
 t1 = seconds2hours(InitialOrbit.calc_time_to_reach_true_anomaly(maneuver1_anomaly_deg))
 InitialOrbit.true_anomaly_deg = maneuver1_anomaly_deg
 
@@ -78,6 +78,7 @@ Orbit2.semimajor_axis_km = maneuver2_semimajor_axis_km
 Orbit2.label = "Circular Parking Orbit"
 
 
+
 # =============================== MANUEVER 2 =========================================
 # Hohmann transfer to reach moons orbit
 # New orbital elements
@@ -87,7 +88,7 @@ manoeuver3_semimajor_km = Orbit2.calculate_new_semi_major_axis(LUNA_ORBIT_R_KM)
 manoeuver3_eccentricity = Orbit2.calculate_new_eccentricity_with_perapsis(LUNA_ORBIT_R_KM)
 
 maneuver3_dv = Orbit2.required_dv_for_tangential_manoeuver(LUNA_ORBIT_R_KM)
-time_dict["Manuever3"] = [float(t3), abs(maneuver3_dv)]
+time_dict["Manuever3"] = [float(seconds2hours(t3)), abs(maneuver3_dv)]
 
 # New Orbit
 Orbit3 = copy.deepcopy(Orbit2)
@@ -145,34 +146,43 @@ Orbit4.parent_body = Moon
 Orbit4.reassign_orbital_elements_from_cartesian(pos_diff, vel_diff)
 Orbit4.label = "Luna SOI Orbit"
 
-# print(Orbit4.semimajor_axis_km)
-# print(Orbit4.eccentricity)
-# print(Orbit4.long_asc_node_deg)
+print(Orbit4.semimajor_axis_km)
+print(Orbit4.eccentricity)
+print(Orbit4.true_anomaly_deg)
+print(Orbit4.inclination_deg)
+print(dt_accum/3600)
+print(Orbit4.calculate_velocity(Orbit4.true_anomaly_deg).calculate_velocity_magnitude())
+
+
+
 
 
 # =============================== MANUEVER 4 =========================================
 # Burn to make into moon orbit
 maneuver4_anomaly_deg   = 0
-maneuver4_semi_major_axis = 30000
-maneuver4_r_km = Orbit4.calculate_position(maneuver4_anomaly_deg).calculate_position_magnitude()
+maneuver4_semi_major_axis_desired = 14069
+maneuver4_eccentricity_axis_desired = 0
 
 dt5 = Orbit4.calc_time_to_reach_true_anomaly(maneuver4_anomaly_deg)
 t5 = dt5 + dt_accum
 Orbit4.true_anomaly_deg = maneuver4_anomaly_deg
-orbit5_apoapsis = Orbit4.calculate_position(Orbit4.true_anomaly_deg).calculate_position_magnitude()
 
 
 # Manuever
-maneuver4_dv = Orbit4.required_dv_for_tangential_manoeuver(maneuver4_r_km)
+maneuver4_dv = Orbit4.required_dv_for_coplanar_transfer(maneuver4_semi_major_axis_desired, maneuver4_eccentricity_axis_desired)
 time_dict["Manuever4"] = [float(t5), abs(maneuver4_dv)]
+
+maneuver4_semi_major_axis = Orbit4.calculate_new_semi_major_axis(maneuver4_semi_major_axis_desired)
 
 # New orbit
 Orbit5 = copy.deepcopy(Orbit4)
 Orbit5.semimajor_axis_km = maneuver4_semi_major_axis
 Orbit5.true_anomaly_deg = 180   # As now periapsis and apoapsis have switched
-Orbit5.eccentricity = 0.6
+# Orbit5.eccentricity = Orbit5.calculate_new_eccentricity_with_perapsis(Orbit5.calculate_periapsis())
+Orbit5.eccentricity = 0.54537
 Orbit5.long_asc_node_deg += 180
 
+# print(Orbit5.semimajor_axis_km)
 # print(Orbit5.inclination_deg)
 
 
@@ -191,14 +201,16 @@ Orbit6 = copy.deepcopy(Orbit5)
 Orbit6.inclination_deg = maneuver5_inc_deg
 Orbit6.label = "Polar Moon Orbit"
 
-print(time_dict)
+# print(time_dict)
 # print(Orbit6.semimajor_axis_km)
 # print(seconds2hours(Orbit6.calculate_orbital_period()))
 
 
 
-orbital_list = [Orbit4, Orbit5, Orbit6]
-# Orbit4.plot_orbits(orbital_list)
+
+# print(time_dict)
+print(time_dict)
+
 
 total_dv = 0
 for value in time_dict.values():
