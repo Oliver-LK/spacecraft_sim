@@ -125,10 +125,6 @@ while distance_away_from_moon > LUNA_SOI_KM:
 
 
 
-orbital_list = [Orbit3, MoonOrbit]
-# InitialOrbit.plot_orbits(orbital_list)
-
-
 # ============================= TRANSFER INTO MOON SOI ====================================
 # Difference in position to give position relative to the moon
 moon_distance = MoonOrbit.calculate_position(MoonOrbit.true_anomaly_deg)
@@ -146,12 +142,6 @@ Orbit4.parent_body = Moon
 Orbit4.reassign_orbital_elements_from_cartesian(pos_diff, vel_diff)
 Orbit4.label = "Luna SOI Orbit"
 
-print(Orbit4.semimajor_axis_km)
-print(Orbit4.eccentricity)
-print(Orbit4.true_anomaly_deg)
-print(Orbit4.inclination_deg)
-print(dt_accum/3600)
-print(Orbit4.calculate_velocity(Orbit4.true_anomaly_deg).calculate_velocity_magnitude())
 
 
 
@@ -181,6 +171,11 @@ Orbit5.true_anomaly_deg = 180   # As now periapsis and apoapsis have switched
 # Orbit5.eccentricity = Orbit5.calculate_new_eccentricity_with_perapsis(Orbit5.calculate_periapsis())
 Orbit5.eccentricity = 0.54537
 Orbit5.long_asc_node_deg += 180
+Orbit5.label = "Luna Stable Orbit"
+
+
+
+
 
 # print(Orbit5.semimajor_axis_km)
 # print(Orbit5.inclination_deg)
@@ -201,12 +196,21 @@ Orbit6 = copy.deepcopy(Orbit5)
 Orbit6.inclination_deg = maneuver5_inc_deg
 Orbit6.label = "Polar Moon Orbit"
 
+print(Orbit6.semimajor_axis_km)
+print(Orbit6.eccentricity)
+print(Orbit6.inclination_deg)
+print(Orbit6.long_asc_node_deg)
+print(Orbit6.arg_periapsis_deg)
+# print(t5/3600)
+# print(Orbit5.calculate_velocity(Orbit5.true_anomaly_deg).calculate_velocity_magnitude())
+
 # print(time_dict)
 # print(Orbit6.semimajor_axis_km)
 # print(seconds2hours(Orbit6.calculate_orbital_period()))
 
 
-
+orbital_list = [Orbit4, Orbit5]
+# Orbit5.plot_orbits(orbital_list)
 
 # print(time_dict)
 print(time_dict)
@@ -216,5 +220,5 @@ total_dv = 0
 for value in time_dict.values():
     total_dv += abs(value[1] )
 
-# print(total_dv)
+print(total_dv)
 # print(seconds2hours(time_dict["Manuever5"][0]))

@@ -432,9 +432,9 @@ class Orbit:
             ax.set_zlim(mid_z - max_range / 2, mid_z + max_range / 2)
 
         else:
-            ax.set_xlim(-1e5, 1e5)
-            ax.set_ylim(-1e5, 1e5)
-            ax.set_zlim(-1e5, 1e5)
+            ax.set_xlim(-7e4, 7e4)
+            ax.set_ylim(-7e4, 7e4)
+            ax.set_zlim(-7e4, 7e4)
 
 
         if self.parent_body.name == "Earth":
@@ -448,7 +448,7 @@ class Orbit:
         ax.set_ylabel('Y (km)')
         ax.set_zlabel('Z (km)')
         ax.set_title('3D Orbit Visualization')
-        ax.legend()
+        ax.legend(loc='upper right')
         plt.show()
 
 
